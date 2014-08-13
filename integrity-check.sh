@@ -13,8 +13,7 @@ fi
 REPOSITORY_STATUS=$(bash git-status-check.sh $BASE_DIR);
 if [ $REPOSITORY_STATUS -ne 'Repository ok!' ]
 then
-  echo "Repository modified" > /dev/stderr;
-  git status > /dev/stderr;
+  echo $REPOSITORY_STATUS > /dev/stderr;
   exit 1;
 fi
 
