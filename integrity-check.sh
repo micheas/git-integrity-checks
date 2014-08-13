@@ -8,24 +8,22 @@ if [ $1 ]
 then
   BASE_TAG=$1;
 fi
- 
-TAG_SEPARATOR='-';
- 
-cd $BASE_DIR;
- 
-NF=$(echo ${BASE_TAG} | awk -F "${TAG_SEPARATOR}" "{print(NF + 1)}");
- 
-REPOSITORY_STATUS=$(git status --porcelain | wc -l);
- 
-if [ ${REPOSITORY_STATUS} -gt 0 ]
+
+# Check if the repository has been polluted
+REPOSITORY_STATUS=$(bash git-status-check.sh $BASE_DIR);
+if [ $REPOSITORY_STATUS -ne 'Repository ok!' ]
 then
   echo "Repository modified" > /dev/stderr;
   git status > /dev/stderr;
   exit 1;
 fi
- 
- 
- 
+
+
+# Check if the repo has appropriately set base tags
+
+TAG_SEPARATOR='-';
+NF=$(echo ${BASE_TAG} | awk -F "${TAG_SEPARATOR}" "{print(NF + 1)}");
+
 LATEST_TAG=$(git tag | \
   grep $BASE_TAG | \
   awk -F "${TAG_SEPARATOR}" \
